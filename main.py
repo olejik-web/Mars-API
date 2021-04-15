@@ -10,6 +10,8 @@ from PIL import Image
 
 
 DELTA = 0.005
+LONGITUDE = 0
+LATTITUDE = 0
 
 
 def get_request():
@@ -48,6 +50,10 @@ def save_image():
         "featureMember"][0]["GeoObject"]
     toponym_coodrinates = toponym["Point"]["pos"]
     toponym_longitude, toponym_lattitude = toponym_coodrinates.split(" ")
+    global LONGITUDE
+    LONGITUDE = float(toponym_longitude)
+    global LATTITUDE
+    LATTITUDE = float(toponym_lattitude)
     delta = "0.005"
     map_params = {
         "ll": ",".join([toponym_longitude, toponym_lattitude]),
@@ -126,6 +132,14 @@ class MainWidget(QWidget):
             make_bigger()
         if event.key() == Qt.Key_PageDown:
             make_smaller()
+        if event.key() == Qt.Key_Up:
+            move_up()
+        if event.key() == Qt.Key_Right:
+            move_right()
+        if event.key() == Qt.Key_Down:
+            move_down()
+        if event.key() == Qt.Key_Left:
+            move_left()
         self.pixmap = QPixmap('images/map.png')
         self.pixmap = self.pixmap.scaled(
             self.label.width(), self.label.height())
