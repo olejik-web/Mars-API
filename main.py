@@ -3,6 +3,7 @@ from io import BytesIO
 from PyQt5.QtGui import QPixmap
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QWidget
+from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtCore import Qt
 
 import requests
@@ -31,6 +32,7 @@ def get_request():
 
 
 JSON_RESPONSE = get_request()
+MAP_TYPE = 'map'
 
 
 def save_image():
@@ -53,12 +55,14 @@ def save_image():
     global LONGITUDE
     LONGITUDE = float(toponym_longitude)
     global LATTITUDE
+    global MAP_TYPE
+    global DELTA
     LATTITUDE = float(toponym_lattitude)
-    delta = "0.005"
+    delta = str(DELTA)
     map_params = {
         "ll": ",".join([toponym_longitude, toponym_lattitude]),
         "spn": ",".join([delta, delta]),
-        "l": "map"
+        "l": MAP_TYPE
     }
     map_api_server = "http://static-maps.yandex.ru/1.x/"
     response = requests.get(map_api_server, params=map_params)
@@ -72,12 +76,13 @@ def make_bigger():
     global LONGITUDE, LATTITUDE
     toponym_longitude, toponym_lattitude = str(LONGITUDE), str(LATTITUDE)
     global DELTA
+    global MAP_TYPE
     DELTA -= 0.001
     delta = str(DELTA)
     map_params = {
         "ll": ",".join([toponym_longitude, toponym_lattitude]),
         "spn": ",".join([delta, delta]),
-        "l": "map"
+        "l": MAP_TYPE
     }
     map_api_server = "http://static-maps.yandex.ru/1.x/"
     try:
@@ -93,13 +98,14 @@ def make_smaller():
     json_response = JSON_RESPONSE
     global DELTA
     global LONGITUDE, LATTITUDE
+    global MAP_TYPE
     toponym_longitude, toponym_lattitude = str(LONGITUDE), str(LATTITUDE)
     DELTA += 0.001
     delta = str(DELTA)
     map_params = {
         "ll": ",".join([toponym_longitude, toponym_lattitude]),
         "spn": ",".join([delta, delta]),
-        "l": "map"
+        "l": MAP_TYPE
     }
     map_api_server = "http://static-maps.yandex.ru/1.x/"
     try:
@@ -130,11 +136,12 @@ def move_up():
     LATTITUDE += height
     toponym_longitude, toponym_lattitude = str(LONGITUDE), str(LATTITUDE)
     global DELTA
+    global MAP_TYPE
     delta = str(DELTA)
     map_params = {
         "ll": ",".join([toponym_longitude, toponym_lattitude]),
         "spn": ",".join([delta, delta]),
-        "l": "map"
+        "l": MAP_TYPE
     }
     map_api_server = "http://static-maps.yandex.ru/1.x/"
     try:
@@ -153,11 +160,12 @@ def move_down():
     LATTITUDE -= height
     toponym_longitude, toponym_lattitude = str(LONGITUDE), str(LATTITUDE)
     global DELTA
+    global MAP_TYPE
     delta = str(DELTA)
     map_params = {
         "ll": ",".join([toponym_longitude, toponym_lattitude]),
         "spn": ",".join([delta, delta]),
-        "l": "map"
+        "l": MAP_TYPE
     }
     map_api_server = "http://static-maps.yandex.ru/1.x/"
     try:
@@ -176,11 +184,34 @@ def move_right():
     LONGITUDE += width
     toponym_longitude, toponym_lattitude = str(LONGITUDE), str(LATTITUDE)
     global DELTA
+    global MAP_TYPE
     delta = str(DELTA)
     map_params = {
         "ll": ",".join([toponym_longitude, toponym_lattitude]),
         "spn": ",".join([delta, delta]),
-        "l": "map"
+        "l": MAP_TYPE
+    }
+    map_api_server = "http://static-maps.yandex.ru/1.x/"
+    try:
+        response = requests.get(map_api_server, params=map_params)
+        im = Image.open(BytesIO(response.content))
+        im.save('images/map.png')
+    except Exception:
+        pass
+
+
+def change_map_type():
+    global JSON_RESPONSE
+    json_response = JSON_RESPONSE
+    global LONGITUDE, LATTITUDE
+    toponym_longitude, toponym_lattitude = str(LONGITUDE), str(LATTITUDE)
+    global DELTA
+    global MAP_TYPE
+    delta = str(DELTA)
+    map_params = {
+        "ll": ",".join([toponym_longitude, toponym_lattitude]),
+        "spn": ",".join([delta, delta]),
+        "l": MAP_TYPE
     }
     map_api_server = "http://static-maps.yandex.ru/1.x/"
     try:
@@ -199,11 +230,12 @@ def move_left():
     LONGITUDE -= width
     toponym_longitude, toponym_lattitude = str(LONGITUDE), str(LATTITUDE)
     global DELTA
+    global MAP_TYPE
     delta = str(DELTA)
     map_params = {
         "ll": ",".join([toponym_longitude, toponym_lattitude]),
         "spn": ",".join([delta, delta]),
-        "l": "map"
+        "l": MAP_TYPE
     }
     map_api_server = "http://static-maps.yandex.ru/1.x/"
     try:
@@ -223,9 +255,23 @@ class MainWidget(QWidget):
         self.pixmap = self.pixmap.scaled(
             self.label.width(), self.label.height())
         self.label.setPixmap(self.pixmap)
+        self.MyButton.clicked.connect(self.run)
+        self.MyButton_2.clicked.connect(self.run)
+        self.MyButton_3.clicked.connect(self.run)
 
     def run(self):
-        self.label.setText("OK")
+        global MAP_TYPE
+        if self.sender() == self.MyButton:
+            MAP_TYPE = 'map'
+        if self.sender() == self.MyButton_2:
+            MAP_TYPE = 'sat'
+        if self.sender() == self.MyButton_3:
+            MAP_TYPE = 'sat,skl'
+        change_map_type()
+        self.pixmap = QPixmap('images/map.png')
+        self.pixmap = self.pixmap.scaled(
+            self.label.width(), self.label.height())
+        self.label.setPixmap(self.pixmap)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_PageUp:
