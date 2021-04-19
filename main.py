@@ -5,6 +5,7 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QWidget
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtCore import Qt
+from pprint import pprint
 
 import requests
 from PIL import Image
@@ -248,6 +249,7 @@ def search_object(address, widget):
         toponym = json_response["response"]["GeoObjectCollection"][
             "featureMember"][0]["GeoObject"]
         toponym_coodrinates = toponym["Point"]["pos"]
+        toponym_address = toponym["metaDataProperty"]["GeocoderMetaData"]["text"]
         toponym_longitude, toponym_lattitude = toponym_coodrinates.split(" ")
         global LONGITUDE
         LONGITUDE = float(toponym_longitude)
@@ -269,6 +271,7 @@ def search_object(address, widget):
         response = requests.get(map_api_server, params=map_params)
         im = Image.open(BytesIO(response.content))
         im.save('images/map.png')
+        widget.plainTextEdit_2.setPlainText(toponym_address)
     except Exception:
         widget.plainTextEdit.setPlainText('Объект не найден!')
 
@@ -320,6 +323,7 @@ class MainWidget(QWidget):
             search_object(self.plainTextEdit.toPlainText(), self)
         elif self.sender() == self.pushButton_2:
             self.plainTextEdit.setPlainText('')
+            self.plainTextEdit_2.setPlainText('')
             global LETTER_LONGITUDE, LETTER_LATTITUDE
             LETTER_LONGITUDE = 0
             LETTER_LATTITUDE = 0
