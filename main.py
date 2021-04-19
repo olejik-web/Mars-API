@@ -312,11 +312,18 @@ class MainWidget(QWidget):
         self.MyButton_3.clicked.connect(self.run)
         self.MyButton_3.clicked.connect(self.run)
         self.pushButton.clicked.connect(self.run)
+        self.pushButton_2.clicked.connect(self.run)
 
     def run(self):
         global MAP_TYPE
         if self.sender() == self.pushButton:
             search_object(self.plainTextEdit.toPlainText(), self)
+        elif self.sender() == self.pushButton_2:
+            self.plainTextEdit.setPlainText('')
+            global LETTER_LONGITUDE, LETTER_LATTITUDE
+            LETTER_LONGITUDE = 0
+            LETTER_LATTITUDE = 0
+            change_map_type()
         else:
             if self.sender() == self.MyButton:
                 MAP_TYPE = 'map'
