@@ -250,6 +250,7 @@ def search_object(address, widget):
             "featureMember"][0]["GeoObject"]
         toponym_coodrinates = toponym["Point"]["pos"]
         toponym_address = toponym["metaDataProperty"]["GeocoderMetaData"]["text"]
+        toponym_post = toponym["metaDataProperty"]['GeocoderMetaData']['Address']['postal_code']
         toponym_longitude, toponym_lattitude = toponym_coodrinates.split(" ")
         global LONGITUDE
         LONGITUDE = float(toponym_longitude)
@@ -271,7 +272,11 @@ def search_object(address, widget):
         response = requests.get(map_api_server, params=map_params)
         im = Image.open(BytesIO(response.content))
         im.save('images/map.png')
-        widget.plainTextEdit_2.setPlainText(toponym_address)
+        if widget.checkBox.checked():
+            widget.plainTextEdit_2.setPlainText(
+                toponym_address + toponym_post)
+        else:
+            widget.plainTextEdit_2.setPlainText(toponym_address)
     except Exception:
         widget.plainTextEdit.setPlainText('Объект не найден!')
 
