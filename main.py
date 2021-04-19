@@ -69,10 +69,8 @@ def save_image():
 def make_bigger():
     global JSON_RESPONSE
     json_response = JSON_RESPONSE
-    toponym = json_response["response"]["GeoObjectCollection"][
-        "featureMember"][0]["GeoObject"]
-    toponym_coodrinates = toponym["Point"]["pos"]
-    toponym_longitude, toponym_lattitude = toponym_coodrinates.split(" ")
+    global LONGITUDE, LATTITUDE
+    toponym_longitude, toponym_lattitude = str(LONGITUDE), str(LATTITUDE)
     global DELTA
     DELTA -= 0.001
     delta = str(DELTA)
@@ -93,12 +91,114 @@ def make_bigger():
 def make_smaller():
     global JSON_RESPONSE
     json_response = JSON_RESPONSE
-    toponym = json_response["response"]["GeoObjectCollection"][
-        "featureMember"][0]["GeoObject"]
-    toponym_coodrinates = toponym["Point"]["pos"]
-    toponym_longitude, toponym_lattitude = toponym_coodrinates.split(" ")
     global DELTA
+    global LONGITUDE, LATTITUDE
+    toponym_longitude, toponym_lattitude = str(LONGITUDE), str(LATTITUDE)
     DELTA += 0.001
+    delta = str(DELTA)
+    map_params = {
+        "ll": ",".join([toponym_longitude, toponym_lattitude]),
+        "spn": ",".join([delta, delta]),
+        "l": "map"
+    }
+    map_api_server = "http://static-maps.yandex.ru/1.x/"
+    try:
+        response = requests.get(map_api_server, params=map_params)
+        im = Image.open(BytesIO(response.content))
+        im.save('images/map.png')
+    except Exception:
+        pass
+
+
+def need_function(json_response):
+    json_envelope = \
+        json_response['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['boundedBy']['Envelope']
+    object_x1, object_y1 = [float(elem)
+                            for elem in json_envelope['lowerCorner'].split()]
+    object_x2, object_y2 = [float(elem)
+                            for elem in json_envelope['upperCorner'].split()]
+    object_width = object_x2 - object_x1
+    object_height = object_y2 - object_y1
+    return (object_width, object_height)
+
+
+def move_up():
+    global JSON_RESPONSE
+    json_response = JSON_RESPONSE
+    global LONGITUDE, LATTITUDE
+    width, height = need_function(JSON_RESPONSE)
+    LATTITUDE += height
+    toponym_longitude, toponym_lattitude = str(LONGITUDE), str(LATTITUDE)
+    global DELTA
+    delta = str(DELTA)
+    map_params = {
+        "ll": ",".join([toponym_longitude, toponym_lattitude]),
+        "spn": ",".join([delta, delta]),
+        "l": "map"
+    }
+    map_api_server = "http://static-maps.yandex.ru/1.x/"
+    try:
+        response = requests.get(map_api_server, params=map_params)
+        im = Image.open(BytesIO(response.content))
+        im.save('images/map.png')
+    except Exception:
+        pass
+
+
+def move_down():
+    global JSON_RESPONSE
+    json_response = JSON_RESPONSE
+    global LONGITUDE, LATTITUDE
+    width, height = need_function(JSON_RESPONSE)
+    LATTITUDE -= height
+    toponym_longitude, toponym_lattitude = str(LONGITUDE), str(LATTITUDE)
+    global DELTA
+    delta = str(DELTA)
+    map_params = {
+        "ll": ",".join([toponym_longitude, toponym_lattitude]),
+        "spn": ",".join([delta, delta]),
+        "l": "map"
+    }
+    map_api_server = "http://static-maps.yandex.ru/1.x/"
+    try:
+        response = requests.get(map_api_server, params=map_params)
+        im = Image.open(BytesIO(response.content))
+        im.save('images/map.png')
+    except Exception:
+        pass
+
+
+def move_right():
+    global JSON_RESPONSE
+    json_response = JSON_RESPONSE
+    global LONGITUDE, LATTITUDE
+    width, height = need_function(JSON_RESPONSE)
+    LONGITUDE += width
+    toponym_longitude, toponym_lattitude = str(LONGITUDE), str(LATTITUDE)
+    global DELTA
+    delta = str(DELTA)
+    map_params = {
+        "ll": ",".join([toponym_longitude, toponym_lattitude]),
+        "spn": ",".join([delta, delta]),
+        "l": "map"
+    }
+    map_api_server = "http://static-maps.yandex.ru/1.x/"
+    try:
+        response = requests.get(map_api_server, params=map_params)
+        im = Image.open(BytesIO(response.content))
+        im.save('images/map.png')
+    except Exception:
+        pass
+
+
+def move_left():
+    global JSON_RESPONSE
+    json_response = JSON_RESPONSE
+    global LONGITUDE, LATTITUDE
+    width, height = need_function(JSON_RESPONSE)
+    LONGITUDE -= width
+    toponym_longitude, toponym_lattitude = str(LONGITUDE), str(LATTITUDE)
+    global DELTA
     delta = str(DELTA)
     map_params = {
         "ll": ",".join([toponym_longitude, toponym_lattitude]),
