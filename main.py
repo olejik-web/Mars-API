@@ -11,9 +11,11 @@ from PIL import Image
 
 
 DELTA = 0.005
-LONGITUDE = 0
-LATTITUDE = 0
+LETTER_LONGITUDE = 0
+LETTER_LATTITUDE = 0
 LETTER = '{},{},org'
+LETTER_LONGITUDE = 0
+LETTER_LATTITUDE = 0
 
 
 def get_request():
@@ -63,7 +65,8 @@ def save_image():
     map_params = {
         "ll": ",".join([toponym_longitude, toponym_lattitude]),
         "spn": ",".join([delta, delta]),
-        "l": MAP_TYPE
+        "l": MAP_TYPE,
+        'pt': LETTER.format(LETTER_LONGITUDE, LETTER_LATTITUDE)
     }
     map_api_server = "http://static-maps.yandex.ru/1.x/"
     response = requests.get(map_api_server, params=map_params)
@@ -83,7 +86,8 @@ def make_bigger():
     map_params = {
         "ll": ",".join([toponym_longitude, toponym_lattitude]),
         "spn": ",".join([delta, delta]),
-        "l": MAP_TYPE
+        "l": MAP_TYPE,
+        'pt': LETTER.format(LETTER_LONGITUDE, LETTER_LATTITUDE)
     }
     map_api_server = "http://static-maps.yandex.ru/1.x/"
     try:
@@ -106,7 +110,8 @@ def make_smaller():
     map_params = {
         "ll": ",".join([toponym_longitude, toponym_lattitude]),
         "spn": ",".join([delta, delta]),
-        "l": MAP_TYPE
+        "l": MAP_TYPE,
+        'pt': LETTER.format(LETTER_LONGITUDE, LETTER_LATTITUDE)
     }
     map_api_server = "http://static-maps.yandex.ru/1.x/"
     try:
@@ -142,7 +147,8 @@ def move_up():
     map_params = {
         "ll": ",".join([toponym_longitude, toponym_lattitude]),
         "spn": ",".join([delta, delta]),
-        "l": MAP_TYPE
+        "l": MAP_TYPE,
+        'pt': LETTER.format(LETTER_LONGITUDE, LETTER_LATTITUDE)
     }
     map_api_server = "http://static-maps.yandex.ru/1.x/"
     try:
@@ -166,7 +172,8 @@ def move_down():
     map_params = {
         "ll": ",".join([toponym_longitude, toponym_lattitude]),
         "spn": ",".join([delta, delta]),
-        "l": MAP_TYPE
+        "l": MAP_TYPE,
+        'pt': LETTER.format(LETTER_LONGITUDE, LETTER_LATTITUDE)
     }
     map_api_server = "http://static-maps.yandex.ru/1.x/"
     try:
@@ -190,7 +197,8 @@ def move_right():
     map_params = {
         "ll": ",".join([toponym_longitude, toponym_lattitude]),
         "spn": ",".join([delta, delta]),
-        "l": MAP_TYPE
+        "l": MAP_TYPE,
+        'pt': LETTER.format(LETTER_LONGITUDE, LETTER_LATTITUDE)
     }
     map_api_server = "http://static-maps.yandex.ru/1.x/"
     try:
@@ -212,7 +220,8 @@ def change_map_type():
     map_params = {
         "ll": ",".join([toponym_longitude, toponym_lattitude]),
         "spn": ",".join([delta, delta]),
-        "l": MAP_TYPE
+        "l": MAP_TYPE,
+        'pt': LETTER.format(LETTER_LONGITUDE, LETTER_LATTITUDE)
     }
     map_api_server = "http://static-maps.yandex.ru/1.x/"
     try:
@@ -245,13 +254,16 @@ def search_object(address, widget):
         global LATTITUDE
         global MAP_TYPE
         global DELTA
+        global LETTER_LONGITUDE, LETTER_LATTITUDE
         LATTITUDE = float(toponym_lattitude)
         delta = str(DELTA)
+        LETTER_LONGITUDE = LONGITUDE
+        LETTER_LATTITUDE = LATTITUDE
         map_params = {
             "ll": ",".join([toponym_longitude, toponym_lattitude]),
             "spn": ",".join([delta, delta]),
             "l": MAP_TYPE,
-            'pt': LETTER.format(toponym_longitude, toponym_lattitude)
+            'pt': LETTER.format(LETTER_LONGITUDE, LETTER_LATTITUDE)
         }
         map_api_server = "http://static-maps.yandex.ru/1.x/"
         response = requests.get(map_api_server, params=map_params)
@@ -274,7 +286,8 @@ def move_left():
     map_params = {
         "ll": ",".join([toponym_longitude, toponym_lattitude]),
         "spn": ",".join([delta, delta]),
-        "l": MAP_TYPE
+        "l": MAP_TYPE,
+        'pt': LETTER.format(LETTER_LONGITUDE, LETTER_LATTITUDE)
     }
     map_api_server = "http://static-maps.yandex.ru/1.x/"
     try:
