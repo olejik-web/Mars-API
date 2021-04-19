@@ -13,6 +13,7 @@ from PIL import Image
 DELTA = 0.005
 LONGITUDE = 0
 LATTITUDE = 0
+LETTER = '{},{},org'
 
 
 def get_request():
@@ -249,7 +250,8 @@ def search_object(address, widget):
         map_params = {
             "ll": ",".join([toponym_longitude, toponym_lattitude]),
             "spn": ",".join([delta, delta]),
-            "l": MAP_TYPE
+            "l": MAP_TYPE,
+            'pt': LETTER.format(toponym_longitude, toponym_lattitude)
         }
         map_api_server = "http://static-maps.yandex.ru/1.x/"
         response = requests.get(map_api_server, params=map_params)
