@@ -169,6 +169,9 @@
    <property name="text">
     <string>Включить почтовый индекс</string>
    </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
   </widget>
  </widget>
  <resources/>
